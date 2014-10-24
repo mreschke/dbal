@@ -1,4 +1,4 @@
-mreschke-dbal
-=============
+dbal
+====
 
-Mreschke dbal workbench
+Mreschke dbal helpers
