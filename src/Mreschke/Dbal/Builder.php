@@ -152,7 +152,7 @@ abstract class Builder implements BuilderInterface
 	public function from($sql)
 	{
 		// Reset connection for next query
-		$this->reset();
+		$this->dbInstance()->reset();
 		
 		$this->from = $sql;
 		return $this;
