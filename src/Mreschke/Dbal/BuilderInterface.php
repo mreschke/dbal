@@ -132,6 +132,13 @@ interface BuilderInterface
 	 */
 	public function find($id);
 
+    /**
+     * Return one row as array by one or more primary keys
+     * @param  mixed $id
+     * @return dbal resource
+     */
+    public function findArray($id);
+
 	/**
 	 * Insert new record.
 	 * @param  object $record

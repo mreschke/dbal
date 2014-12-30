@@ -325,6 +325,31 @@ abstract class Builder implements BuilderInterface
 	}
 
 	/**
+	 * Return one row as array by one or more primary keys
+	 * @param  mixed $id
+	 * @return dbal resource
+	 */
+	public function findArray($id)
+	{
+		// $id and $keys can be a string, or an array, or multipel parameters
+		// There should be as many $ids as there are keys
+		// convert $id and $keys into an array
+		$ids = is_array($id) ? $id : func_get_args();
+		$keys = $this->key;
+		if (!is_array($keys)) $keys = explode(',', $keys);
+
+		if (count($ids) == count($keys)) {
+			for ($i = 0; $i <= count($keys)-1; $i++) {
+				$this->where(trim($keys[$i]), trim($ids[$i]));
+			}
+			$this->orderBy(null);
+			return $this->execute()->firstArray();
+		} else {
+			throw new \Exception('incorrect number of primary key values');
+		}
+	}
+
+	/**
 	 * Insert new record
 	 * @param  object $record
 	 * @return execute results
