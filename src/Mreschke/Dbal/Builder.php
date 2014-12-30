@@ -318,7 +318,7 @@ abstract class Builder implements BuilderInterface
 				$this->where(trim($keys[$i]), trim($ids[$i]));
 			}
 			$this->orderBy(null);
-			return $this->execute();
+			return $this->execute()->first();
 		} else {
 			throw new \Exception('incorrect number of primary key values');
 		}

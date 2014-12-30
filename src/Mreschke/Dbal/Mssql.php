@@ -33,6 +33,7 @@ class Mssql extends Builder implements DbalInterface
 
 	/**
 	 * Get this instance
+	 * If facade, can also use Mssql::getFacadeRoot()
 	 * @return self
 	 */
 	public function getInstance()

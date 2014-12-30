@@ -34,6 +34,7 @@ class Mysql extends Builder implements DbalInterface
 
 	/**
 	 * Get this instance
+	 * If facade, can also use Mssql::getFacadeRoot()
 	 * @return self
 	 */
 	public function getInstance()
@@ -137,10 +138,8 @@ class Mysql extends Builder implements DbalInterface
 			$this->handle = $this->connect();
 
 			//Execute SQL Query
-			#$this->result = $this->handle->query($query);
 			if (!$this->result = $this->handle->query($query)) {
-				$error = "<div style='color: red;font-weight: bold'>".mssql_get_last_message()."</div>";
-				echo $error;
+				echo "Mysql Error: ".$this->handle->error;
 			}
 		}
 		return $this;
