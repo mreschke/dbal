@@ -398,7 +398,7 @@ abstract class Builder implements BuilderInterface
 		}
 
 		// Get the original record by primary key(s)
-		$original = $this->find($originalPKValues)->first();
+		$original = $this->find($originalPKValues);
 
 		$foundValue = false;
 		$query = "UPDATE $this->from SET ";
