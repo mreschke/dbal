@@ -1,5 +1,6 @@
 <?php namespace Mreschke\Dbal;
 
+use Config;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -18,18 +19,31 @@ class DbalServiceProvider extends ServiceProvider {
 	protected $defer = true;
 
 	/**
+	 * Bootstrap the application events.
+	 *
+	 * @return void
+	 */
+	public function boot()
+	{
+		//
+	}
+
+	/**
 	 * Register the service provider.
 	 *
 	 * @return void
 	 */
 	public function register()
 	{
-		\Lifecycle::add(__FILE__.' - '.__FUNCTION__, 1);
+		// Register Foundation Facades
+		$loader = \Illuminate\Foundation\AliasLoader::getInstance();
+		$loader->alias('Mysql', 'Mreschke\Dbal\Facades\Mysql');
+		$loader->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');
 
 		// Bind Mysql to IoC
 		$this->app->bind('Mreschke\Dbal\Mysql', function() {
 			return new Mysql(
-				\Config::get('my.db'),
+				Config::get('database.connections'),
 				'mysql'
 			);
 		});
@@ -37,20 +51,10 @@ class DbalServiceProvider extends ServiceProvider {
 		// Bind Mssql to IoC
 		$this->app->bind('Mreschke\Dbal\Mssql', function() {
 			return new Mssql(
-				\Config::get('my.db'),
-				'mssql'
+				Config::get('database.connections'),
+				'sqlsrv'
 			);
 		});
-	}
-
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		\Lifecycle::add(__FILE__.' - '.__FUNCTION__);
 	}
 
 	/**
@@ -60,7 +64,10 @@ class DbalServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array('Mreschke\Dbal\Mssql');
+		return array(
+			'Mreschke\Dbal\Mssql',
+			'Mreschke\Dbal\Mysql',
+		);
 	}
 
 }

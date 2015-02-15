@@ -65,12 +65,7 @@ class Mysql extends Builder implements DbalInterface
 	 */
 	public function connection($connectionName)
 	{
-		if (str_contains($connectionName, '{')) {
-			// Using an actual json string
-			$this->connectionString = $connectionName;
-			$connectionName = 'custom';
-		} else {
-			// Using a config key that points to a json string
+		if (isset($this->config[$connectionName])) {
 			$this->connectionString = $this->config[$connectionName];
 		}
 		$this->connectionName = $connectionName;
@@ -82,15 +77,12 @@ class Mysql extends Builder implements DbalInterface
 	 * @return void
 	 */
 	private function connect() {
-		$connectionString = json_decode($this->connectionString);
-		$port = 3306;
-		if (isset($connectionString->port)) $port = $connectionString->port;
 		$handle = new \mysqli(
-			$connectionString->server,
-			$connectionString->username,
-			$connectionString->password,
-			$connectionString->database,
-			$port
+			$this->connectionString['host'],
+			$this->connectionString['username'],
+			$this->connectionString['password'],
+			$this->connectionString['database'],
+			(isset($this->connectionString['port']) ? $this->connectionString['port'] : 3306)
 		);
 		if (mysqli_connect_error()) {
 			die ("Couldn't connect to MySQL Server on ".$connectionString->server.".<br />Error: ".mysqli_connect_error());

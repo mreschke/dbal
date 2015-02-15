@@ -64,12 +64,7 @@ class Mssql extends Builder implements DbalInterface
 	 */
 	public function connection($connectionName)
 	{
-		if (str_contains($connectionName, '{')) {
-			// Using an actual json string
-			$this->connectionString = $connectionName;
-			$connectionName = 'custom';
-		} else {
-			// Using a config key that points to a json string
+		if (isset($this->config[$connectionName])) {
 			$this->connectionString = $this->config[$connectionName];
 		}
 		$this->connectionName = $connectionName;
@@ -81,16 +76,15 @@ class Mssql extends Builder implements DbalInterface
 	 * @return void
 	 */
 	private function connect() {
-		$connectionString = json_decode($this->connectionString);
 		$handle = mssql_connect(
-			$connectionString->server,
-			$connectionString->username,
-			$connectionString->password
-		) or die("Couldn't connect to SQL Server on ".$connectionString->server);
+			$this->connectionString['host'],
+			$this->connectionString['username'],
+			$this->connectionString['password']
+		) or die("Couldn't connect to SQL Server on ".$this->connectionString['host']);
 		mssql_select_db(
-			$connectionString->database,
+			$this->connectionString['database'],
 			$handle
-		) or die("Couldn't open database ".$connectionString->database);
+		) or die("Couldn't open database ".$this->connectionString['database']);
 		return $handle;
 	}
 
