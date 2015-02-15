@@ -1,20 +1,23 @@
 {
-    "name": "mreschke/dbal",
-    "description": "",
-    "authors": [
-        {
-            "name": "Admin Istrator",
-            "email": "admin@example.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.3.0",
-        "illuminate/support": "4.2.*"
-    },
-    "autoload": {
-        "classmap": [
-            "src/Mreschke/Dbal"
-        ]
-    },
-    "minimum-stability": "stable"
+	"name": "mreschke/dbal",
+	"type": "library",
+	"description": "Mreschke Helpers",
+	"keywords": ["mreschke", "dbal"],
+	"homepage": "http://github.com/mreschke/mreschke-dbal",
+	"license": "MIT",
+	"support": {
+		"issues": "https://github.com/mreschke/mreschke-dbal/issues"
+	},
+	"authors": [
+		{
+			"name": "Matthew Reschke",
+			"email": "mail@mreschke.com",
+			"homepage": "http://mreschke.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Mreschke\\Dbal\\": ""
+		}
+	}
 }

@@ -1,8 +1,6 @@
-/vendor
-composer.phar
-composer.lock
-.env.*.php
-.env.php
+# Keep /vendor in git for modules
+/node_modules
 .DS_Store
 Thumbs.db
 .nfs*
+.swp
