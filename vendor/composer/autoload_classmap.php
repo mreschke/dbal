@@ -6,4 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Mreschke\\Dbal\\Builder' => $baseDir . '/Builder.php',
+    'Mreschke\\Dbal\\BuilderInterface' => $baseDir . '/BuilderInterface.php',
+    'Mreschke\\Dbal\\DbalInterface' => $baseDir . '/DbalInterface.php',
+    'Mreschke\\Dbal\\DbalServiceProvider' => $baseDir . '/DbalServiceProvider.php',
+    'Mreschke\\Dbal\\Facades\\Mssql' => $baseDir . '/Facades/Mssql.php',
+    'Mreschke\\Dbal\\Facades\\Mysql' => $baseDir . '/Facades/Mysql.php',
+    'Mreschke\\Dbal\\Mssql' => $baseDir . '/Mssql.php',
+    'Mreschke\\Dbal\\Mysql' => $baseDir . '/Mysql.php',
 );
