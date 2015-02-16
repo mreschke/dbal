@@ -35,7 +35,7 @@ class DbalServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		// Register Foundation Facades
+		// Register Dbal Facades
 		$loader = \Illuminate\Foundation\AliasLoader::getInstance();
 		$loader->alias('Mysql', 'Mreschke\Dbal\Facades\Mysql');
 		$loader->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');

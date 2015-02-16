@@ -1,4 +1,3 @@
-dbal
-====
+# mreschke-dbal
 
-Mreschke dbal helpers
+Mreschke DBAL Helpers
