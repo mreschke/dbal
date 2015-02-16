@@ -161,6 +161,9 @@ class Mssql extends Builder implements DbalInterface
 	 */
 	public function procedure($procedure, $params = null)
 	{
+		// Establish a connection for every query
+		$this->handle = $this->connect();
+
 		$statement = mssql_init($procedure) or die ("Failed to initialize procedure $procedure");
 		if (isset($params)) {
 			foreach ($params as $param) {
