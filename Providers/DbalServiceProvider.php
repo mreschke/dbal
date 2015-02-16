@@ -1,4 +1,4 @@
-<?php namespace Mreschke\Dbal;
+<?php namespace Mreschke\Dbal\Providers;
 
 use Config;
 use Illuminate\Support\ServiceProvider;
