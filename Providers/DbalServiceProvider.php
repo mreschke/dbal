@@ -1,6 +1,8 @@
 <?php namespace Mreschke\Dbal\Providers;
 
 use Config;
+use Mreschke\Dbal\Mysql;
+use Mreschke\Dbal\Mssql;
 use Illuminate\Support\ServiceProvider;
 
 /**
