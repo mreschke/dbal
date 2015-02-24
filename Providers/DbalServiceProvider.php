@@ -3,7 +3,8 @@
 use Config;
 use Mreschke\Dbal\Mysql;
 use Mreschke\Dbal\Mssql;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\AliasLoader;
+use Mrcore\Modules\Foundation\Support\ServiceProvider;
 
 /**
  * Provide Dbal services
@@ -37,12 +38,12 @@ class DbalServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		// Register Dbal Facades
-		$loader = \Illuminate\Foundation\AliasLoader::getInstance();
-		$loader->alias('Mysql', 'Mreschke\Dbal\Facades\Mysql');
-		$loader->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');
+		// Register Facades
+		$facade = AliasLoader::getInstance();
+		$facade->alias('Mysql', 'Mreschke\Dbal\Facades\Mysql');
+		$facade->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');		
 
-		// Bind Mysql to IoC
+		// Mysql Binding
 		$this->app->bind('Mreschke\Dbal\Mysql', function() {
 			return new Mysql(
 				Config::get('database.connections'),
@@ -50,7 +51,7 @@ class DbalServiceProvider extends ServiceProvider {
 			);
 		});
 
-		// Bind Mssql to IoC
+		// Mssql Binding
 		$this->app->bind('Mreschke\Dbal\Mssql', function() {
 			return new Mssql(
 				Config::get('database.connections'),
