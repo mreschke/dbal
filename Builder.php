@@ -21,6 +21,12 @@ abstract class Builder implements BuilderInterface
 	protected $select;
 
 	/**
+	 * Set distinct
+	 * @var array
+	 */
+	protected $distinct;	
+
+	/**
 	 * The tables to query
 	 * @var string
 	 */
@@ -68,6 +74,7 @@ abstract class Builder implements BuilderInterface
 	{
 		$this->key = null;
 		$this->select = ['*'];
+		$this->distinct = false;
 		$this->from = null;
 		$this->where = null;
 		$this->groupBy = null;
@@ -91,6 +98,7 @@ abstract class Builder implements BuilderInterface
 	public function queryBuilder()
 	{
 		$query = "SELECT ";
+		if ($this->distinct) $query .= "DISTINCT ";
 		foreach ($this->select as $column) {
 			$query .= "$column, ";
 		}
@@ -143,6 +151,17 @@ abstract class Builder implements BuilderInterface
 		$this->select = array_merge((array) $this->select, $column);
 		return $this;
 	}
+
+	/**
+	 * Set a distinct flag
+	 * @param  boolean $distinct = true
+	 * @return self chainable
+	 */
+	public function distinct($distinct = true)
+	{
+		$this->distinct = $distinct;
+		return $this;
+	}	
 
 	/**
 	 * Set a new from statement
