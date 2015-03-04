@@ -43,6 +43,9 @@ class DbalServiceProvider extends ServiceProvider {
 		$facade->alias('Mysql', 'Mreschke\Dbal\Facades\Mysql');
 		$facade->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');		
 
+		// PHP Settings
+		ini_set('mssql.timeout', '3600'); #default is 60 seconds, too short
+
 		// Mysql Binding
 		$this->app->bind('Mreschke\Dbal\Mysql', function() {
 			return new Mysql(
