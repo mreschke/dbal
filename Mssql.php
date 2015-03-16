@@ -179,6 +179,27 @@ class Mssql extends Builder implements DbalInterface
 		return $this;
 	}
 
+    public function isGuid($guid)
+    {
+        if (!is_string($guid)) return false;
+        if (strlen($guid)!=16) return false;
+        $version=ord(substr($guid,7,1))>>4;
+        // version 1 : Time-based version Uses timestamp, clock sequence, and MAC network card address
+        // version 2 : Reserverd
+        // version 3 : Name-based version Constructs values from a name for all sections
+        // version 4 : Random version Use random numbers for all sections
+        if ($version<1 || $version>4) return false;
+        $typefield=ord(substr($guid,8,1))>>4;
+        $type=-1;
+        if (($typefield & bindec(1000))==bindec(0000)) $type=0; // type 0 indicated by 0??? Reserved for NCS (Network Computing System) backward compatibility
+        if (($typefield & bindec(1100))==bindec(1000)) $type=2; // type 2 indicated by 10?? Standard format
+        if (($typefield & bindec(1110))==bindec(1100)) $type=6; // type 6 indicated by 110? Reserved for Microsoft Corporation backward compatibility
+        if (($typefield & bindec(1110))==bindec(1110)) $type=7; // type 7 indicated by 111? Reserved for future definition
+        // assuming Standard type for SQL GUIDs
+        if ($type!=2) return false;
+        return true;
+    }	
+
 	/**
 	 * Get entire data set as object
 	 * @return object mssql_fetch_object
@@ -192,39 +213,55 @@ class Mssql extends Builder implements DbalInterface
 			mssql_data_seek($this->result, 0);
 			$rows = array();
 			$firstRow = true;
-			$guidColumns = array();
-			$dateColumns = array();
-			$foundGuid = false;
-			$foundDate = false;
+			$guidColumns = null;
+			$dateColumns = null;
+			$checkColumns = null;
 			while ($row = mssql_fetch_object($this->result)) {
-				// One time, detect column types
+				// Get column information
 				if ($firstRow) {
+					$firstRow = false;
 					for ($f = 0; $f <= $this->fieldCount()-1; $f++) {
+						// Column information
 						$field = mssql_fetch_field($this->result, $f);
-						$name = $field->name;
-						if ($field->type == 'blob' || $field->type == 'unknown') {
-							#echo $field->type."-",$name."<Br />";
-							if (strlen(mssql_guid_string($row->$name)) == 36) {
-								$guidColumns[] = $field->name;
-								$foundGuid = true;
+						$checkColumns[] = $field->name;
+					}
+				}
+
+				// Loop each column and determine its data type.  If column row data is null
+				// keep retrying on each row until data is found and the type is determined
+				if (isset($checkColumns)) {
+					foreach ($checkColumns as $colOffset => $name) {
+						if (isset($row->$name)) {
+							$field = mssql_fetch_field($this->result, $colOffset);
+							$length = $field->max_length;
+							$type = $field->type;
+							
+							// Type Detection
+							if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
+								// Column is a GUID
+								$guidColumns[] = $name;
+							
+							} elseif ($type == 'datetime') {
+								// Column is a datetime
+								$dateColumns[] = $field->name;
 							}
-						} elseif ($field->type == 'datetime') {
-							$dateColumns[] = $field->name;
-							$foundDate = true;
+
+							// Remove from checkColumns
+							unset($checkColumns[$colOffset]);
+
 						}
 					}
-					$firstRow = false;
 				}
 
 				// Convert all GUID columns
-				if ($foundGuid) {
+				if (isset($guidColumns)) {
 					foreach ($guidColumns as $guidColumn) {
 						$row->$guidColumn = mssql_guid_string($row->$guidColumn);
 					}
 				}
 
 				// Convert all DateTime Columns
-				if ($foundDate) {
+				if (isset($dateColumns)) {
 					foreach ($dateColumns as $dateColumn) {
 						if (isset($row->$dateColumn)) {
 							$row->$dateColumn = date("Y-m-d H:i:s", strtotime($row->$dateColumn));
@@ -257,6 +294,10 @@ class Mssql extends Builder implements DbalInterface
 		if ($this->count() > 0) {
 			mssql_data_seek($this->result, 0);
 			$rows = array();
+			$firstRow = true;
+			$guidColumns = null;
+			$dateColumns = null;
+			$checkColumns = null;
 
 			// addEmptyRow can be either true/false in which case the blank key is -1
 			// or addEmptyRow can be a string or '' which is used as the blank key itself
@@ -268,39 +309,52 @@ class Mssql extends Builder implements DbalInterface
 				$rows[$addEmptyRow] = '';
 			}
 
-			$firstRow = true;
-			$guidColumns = array();
-			$dateColumns = array();
-			$foundGuid = false;
-			$foundDate = false;
 			while ($row = mssql_fetch_assoc($this->result)) {
-				// One time, detect column types
+				// Get column information
 				if ($firstRow) {
-					for ($f = 0; $f <= $this->fieldCount()-1; $f++) {
-						$field = mssql_fetch_field($this->result, $f);
-						$name = $field->name;
-						if ($field->type == 'blob' || $field->type == 'unknown') {
-							if (strlen(mssql_guid_string($row[$name])) == 36) {
-								$guidColumns[] = $field->name;
-								$foundGuid = true;
-							}
-						} elseif ($field->type == 'datetime') {
-							$dateColumns[] = $field->name;
-							$foundDate = true;
-						}
-					}
 					$firstRow = false;
+					for ($f = 0; $f <= $this->fieldCount()-1; $f++) {
+						// Column information
+						$field = mssql_fetch_field($this->result, $f);
+						$checkColumns[] = $field->name;
+					}
 				}
 
+				// Loop each column and determine its data type.  If column row data is null
+				// keep retrying on each row until data is found and the type is determined
+				if (isset($checkColumns)) {
+					foreach ($checkColumns as $colOffset => $name) {
+						if (isset($row[$name])) {
+							$field = mssql_fetch_field($this->result, $colOffset);
+							$length = $field->max_length;
+							$type = $field->type;
+							
+							// Type Detection
+							if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
+								// Column is a GUID
+								$guidColumns[] = $name;
+							
+							} elseif ($type == 'datetime') {
+								// Column is a datetime
+								$dateColumns[] = $field->name;
+							}
+
+							// Remove from checkColumns
+							unset($checkColumns[$colOffset]);
+
+						}
+					}
+				}				
+
 				// Convert all GUID columns
-				if ($foundGuid) {
+				if (isset($guidColumns)) {
 					foreach ($guidColumns as $guidColumn) {
 						$row[$guidColumn] = mssql_guid_string($row[$guidColumn]);
 					}
 				}
 
 				// Convert all DateTime Columns
-				if ($foundDate) {
+				if (isset($dateColumns)) {
 					foreach ($dateColumns as $dateColumn) {
 						if (isset($row[$dateColumn])) {
 							$row[$dateColumn] = date("Y-m-d H:i:s", strtotime($row[$dateColumn]));
@@ -368,12 +422,15 @@ class Mssql extends Builder implements DbalInterface
 			for ($f = 0; $f <= $this->fieldCount()-1; $f++) {
 				$field = mssql_fetch_field($this->result, $f);
 				$name = $field->name;
-				if ($field->type == 'blob' || $field->type == 'unknown') {
-					if (strlen(mssql_guid_string($row->$name)) == 36) {
+				$length = $field->max_length;
+				$type = $field->type;
+				if (isset($row->$name)) {
+					if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
+						// Column is a GUID
 						$row->$name = mssql_guid_string($row->$name);
-					}
-				} elseif ($field->type == 'datetime') {
-					if (isset($row->$name)) {
+
+					} elseif ($type == 'datetime') {
+						// Column is a datetime
 						$row->$name = date("Y-m-d H:i:s", strtotime($row->$name));
 					}
 				}
@@ -397,12 +454,15 @@ class Mssql extends Builder implements DbalInterface
 			for ($f = 0; $f <= $this->fieldCount()-1; $f++) {
 				$field = mssql_fetch_field($this->result, $f);
 				$name = $field->name;
-				if ($field->type == 'blob' || $field->type == 'unknown') {
-					if (strlen(mssql_guid_string($row[$name])) == 36) {
+				$length = $field->max_length;
+				$type = $field->type;
+				if (isset($row[$name])) {
+					if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
+						// Column is a GUID
 						$row[$name] = mssql_guid_string($row[$name]);
-					}
-				} elseif ($field->type == 'datetime') {
-					if (isset($row[$name])) {
+
+					} elseif ($type == 'datetime') {
+						// Column is a datetime
 						$row[$name] = date("Y-m-d H:i:s", strtotime($row[$name]));
 					}
 				}
@@ -443,14 +503,17 @@ class Mssql extends Builder implements DbalInterface
 				$position = 0;
 				$value = $row[0];
 			}
-			$field = mssql_fetch_field($this->result, $position);
-			$name = $field->name;
-			if ($field->type == 'blob' || $field->type == 'unknown') {
-				if (strlen(mssql_guid_string($value)) == 36) {
+			if (isset($value)) {
+				$field = mssql_fetch_field($this->result, $position);
+				$name = $field->name;
+				$length = $field->max_length;
+				$type = $field->type;			
+				if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
+					// Column is a GUID
 					$value = mssql_guid_string($value);
-				}
-			} elseif ($field->type == 'datetime') {
-				if (isset($value)) {
+
+				} elseif ($type == 'datetime') {
+					// Column is a datetime
 					$value = date("Y-m-d H:i:s", strtotime($value));
 				}
 			}
