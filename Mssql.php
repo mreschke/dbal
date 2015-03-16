@@ -41,7 +41,7 @@ class Mssql extends Builder implements DbalInterface
 		return $this;
 	}
 
-	/** 
+	/**
 	 * Get the current connection name
 	 */
 	public function connectionName()
@@ -49,7 +49,7 @@ class Mssql extends Builder implements DbalInterface
 		return $this->connectionName;
 	}
 
-	/** 
+	/**
 	 * Get the current connection json string
 	 */
 	public function connectionString()
@@ -126,14 +126,14 @@ class Mssql extends Builder implements DbalInterface
 		if (isset($query)) {
 			// Establish a connection for every query
 			$this->handle = $this->connect();
-			
+
 			//Execute SQL Query
 			#mssql_query("SET ANSI_NULLS ON") or die("Error: ".mssql_get_last_message());    #Fixes a multi server UNION error
 			#mssql_query("SET ANSI_WARNINGS ON") or die("Error: ".mssql_get_last_message()); #Fixes a multi server UNION error
 			#$this->result = mssql_query($query) or die("Error: ".mssql_get_last_message());
 			mssql_query("SET ANSI_NULLS ON");    #Fixes a multi server UNION error
 			mssql_query("SET ANSI_WARNINGS ON"); #Fixes a multi server UNION error
-			
+
 			if (!$this->result = mssql_query($query)) {
 				$error = "<div style='color: red;font-weight: bold'>".mssql_get_last_message()."</div>";
 				#die($error);
@@ -179,27 +179,6 @@ class Mssql extends Builder implements DbalInterface
 		return $this;
 	}
 
-    public function isGuid($guid)
-    {
-        if (!is_string($guid)) return false;
-        if (strlen($guid)!=16) return false;
-        $version=ord(substr($guid,7,1))>>4;
-        // version 1 : Time-based version Uses timestamp, clock sequence, and MAC network card address
-        // version 2 : Reserverd
-        // version 3 : Name-based version Constructs values from a name for all sections
-        // version 4 : Random version Use random numbers for all sections
-        if ($version<1 || $version>4) return false;
-        $typefield=ord(substr($guid,8,1))>>4;
-        $type=-1;
-        if (($typefield & bindec(1000))==bindec(0000)) $type=0; // type 0 indicated by 0??? Reserved for NCS (Network Computing System) backward compatibility
-        if (($typefield & bindec(1100))==bindec(1000)) $type=2; // type 2 indicated by 10?? Standard format
-        if (($typefield & bindec(1110))==bindec(1100)) $type=6; // type 6 indicated by 110? Reserved for Microsoft Corporation backward compatibility
-        if (($typefield & bindec(1110))==bindec(1110)) $type=7; // type 7 indicated by 111? Reserved for future definition
-        // assuming Standard type for SQL GUIDs
-        if ($type!=2) return false;
-        return true;
-    }	
-
 	/**
 	 * Get entire data set as object
 	 * @return object mssql_fetch_object
@@ -235,12 +214,12 @@ class Mssql extends Builder implements DbalInterface
 							$field = mssql_fetch_field($this->result, $colOffset);
 							$length = $field->max_length;
 							$type = $field->type;
-							
+
 							// Type Detection
 							if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
 								// Column is a GUID
 								$guidColumns[] = $name;
-							
+
 							} elseif ($type == 'datetime') {
 								// Column is a datetime
 								$dateColumns[] = $field->name;
@@ -328,12 +307,12 @@ class Mssql extends Builder implements DbalInterface
 							$field = mssql_fetch_field($this->result, $colOffset);
 							$length = $field->max_length;
 							$type = $field->type;
-							
+
 							// Type Detection
 							if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
 								// Column is a GUID
 								$guidColumns[] = $name;
-							
+
 							} elseif ($type == 'datetime') {
 								// Column is a datetime
 								$dateColumns[] = $field->name;
@@ -344,7 +323,7 @@ class Mssql extends Builder implements DbalInterface
 
 						}
 					}
-				}				
+				}
 
 				// Convert all GUID columns
 				if (isset($guidColumns)) {
@@ -394,7 +373,7 @@ class Mssql extends Builder implements DbalInterface
 	{
 		return $this->getArray($value, $key, $addEmptyRow);
 	}
-	
+
 	/**
 	 * Alias to getArray but requires a value
 	 * @param  string $value optional value field
@@ -450,7 +429,7 @@ class Mssql extends Builder implements DbalInterface
 
 		if ($this->count() > 0) {
 			mssql_data_seek($this->result, 0);
-			$row = mssql_fetch_assoc($this->result);	
+			$row = mssql_fetch_assoc($this->result);
 			for ($f = 0; $f <= $this->fieldCount()-1; $f++) {
 				$field = mssql_fetch_field($this->result, $f);
 				$name = $field->name;
@@ -479,7 +458,7 @@ class Mssql extends Builder implements DbalInterface
 	{
 		return $this->firstArray();
 	}
-	
+
 	/**
 	 * Pluck first row/colum or first row/specified column
 	 * @param  string $column optional column to pluck
@@ -507,7 +486,7 @@ class Mssql extends Builder implements DbalInterface
 				$field = mssql_fetch_field($this->result, $position);
 				$name = $field->name;
 				$length = $field->max_length;
-				$type = $field->type;			
+				$type = $field->type;
 				if ($length == 16 && ($type == 'blob' || $type == 'unknown')) {
 					// Column is a GUID
 					$value = mssql_guid_string($value);
@@ -573,7 +552,7 @@ class Mssql extends Builder implements DbalInterface
 		if (isset($save_path)) {
 			$tmp_dir = $save_path;
 		} else {
-			$tmp_dir = \Snippets\Config::WEB_TMP_DIR;	
+			$tmp_dir = \Snippets\Config::WEB_TMP_DIR;
 		}
 		if (!is_dir($tmp_dir)) exec('mkdir -p '.$tmp_dir);
 		$filename = preg_replace("'\.csv'i", '', $filename)."_".date("Y-m-d-H-m-s").".csv";
