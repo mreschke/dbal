@@ -235,7 +235,9 @@ class Mssql extends Builder implements DbalInterface
 				// Convert all GUID columns
 				if (isset($guidColumns)) {
 					foreach ($guidColumns as $guidColumn) {
-						$row->$guidColumn = mssql_guid_string($row->$guidColumn);
+						if (isset($row->$guidColumn)) {
+							$row->$guidColumn = mssql_guid_string($row->$guidColumn);
+						}
 					}
 				}
 
@@ -328,7 +330,9 @@ class Mssql extends Builder implements DbalInterface
 				// Convert all GUID columns
 				if (isset($guidColumns)) {
 					foreach ($guidColumns as $guidColumn) {
-						$row[$guidColumn] = mssql_guid_string($row[$guidColumn]);
+						if (isset($row[$guidColumn])) {
+							$row[$guidColumn] = mssql_guid_string($row[$guidColumn]);
+						}
 					}
 				}
 

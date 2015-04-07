@@ -46,6 +46,12 @@ class DbalServiceProvider extends ServiceProvider {
 		// PHP Settings
 		ini_set('mssql.timeout', '3600'); #default is 60 seconds, too short
 
+		// Notice:  I don't believe these should ever be singletons.
+		// If they are singletons, you may set a connection once, then call
+		// another class that changes the connection, the previous class
+		// will now have the new connection.  Will cause connection conflics.
+		// Leave as ->bind()
+
 		// Mysql Binding
 		$this->app->bind('Mreschke\Dbal\Mysql', function() {
 			return new Mysql(
