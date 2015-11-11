@@ -4,7 +4,7 @@ use Config;
 use Mreschke\Dbal\Mysql;
 use Mreschke\Dbal\Mssql;
 use Illuminate\Foundation\AliasLoader;
-use Mrcore\Modules\Foundation\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Provide Dbal services
@@ -41,7 +41,7 @@ class DbalServiceProvider extends ServiceProvider {
 		// Register Facades
 		$facade = AliasLoader::getInstance();
 		$facade->alias('Mysql', 'Mreschke\Dbal\Facades\Mysql');
-		$facade->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');		
+		$facade->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');
 
 		// PHP Settings
 		ini_set('mssql.timeout', '3600'); #default is 60 seconds, too short
