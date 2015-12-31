@@ -44,7 +44,7 @@ class DbalServiceProvider extends ServiceProvider {
 		$facade->alias('Mssql', 'Mreschke\Dbal\Facades\Mssql');
 
 		// PHP Settings
-		ini_set('mssql.timeout', '3600'); #default is 60 seconds, too short
+		#ini_set('mssql.timeout', '3600'); #default is 60 seconds, too short
 
 		// Notice:  I don't believe these should ever be singletons.
 		// If they are singletons, you may set a connection once, then call

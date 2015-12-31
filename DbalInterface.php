@@ -10,22 +10,6 @@ interface DbalInterface
 {
 
 	/**
-	 * Get this instance
-	 * @return self
-	 */
-	public function getInstance();
-
-	/** 
-	 * Get the current connection name
-	 */
-	public function connectionName();
-
-	/** 
-	 * Get the current connection json string
-	 */
-	public function connectionString();	
-
-	/**
 	 * Change the connection string
 	 * @param  string $connectionName new connection string name in $config array
 	 * @return self chainable
@@ -34,11 +18,12 @@ interface DbalInterface
 
 	/**
 	 * Disconnect and clear results and handles (optional)
+	 * @return void
 	 */
 	public function disconnect();
 
 	/**
-	 * Reset connection by clearing the handle
+	 * Alias to disconnect
 	 * @return void
 	 */
 	public function reset();
@@ -67,53 +52,59 @@ interface DbalInterface
 
 	/**
 	 * Get entire data set as object
-	 * @return object mssql_fetch_object
+	 * @return \Illuminate\Support\Collection
 	 */
 	public function get();
+
+	/**
+	 * Alias to get
+	 * @return \Illuminate\Support\Collection
+	 */
+	public function all();
 
 	/**
 	 * Get entire data set as array. Optionally return only one column
 	 * as array or or two columns for key/value associative array.
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
-	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default -1)
-	 * @return object mssql_fetch_assoc
+	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
+	 * @return \Illuminate\Support\Collection|array
 	 */
-	public function getArray($key = null, $value = null, $addEmptyRow = false);
+	public function getArray($value = null, $key = null, $addEmptyRow = false);
 
 	/**
 	 * Alias to getArray
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
-	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default -1)
-	 * @return object mssql_fetch_assoc
+	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
+	 * @return object mssql_fetch_assoc|array
 	 */
-	public function getAssoc($key = null, $value = null, $addEmptyRow = false);
+	public function getAssoc($value = null, $key = null, $addEmptyRow = false);
 
 	/**
 	 * Alias to getArray but requires a value
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
-	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default -1)
+	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
 	 * @return array
 	 */
-	public function lists($key, $value = null, $addEmptyRow = false);
+	public function lists($value, $key = null, $addEmptyRow = false);
 
 	/**
-	 * Get the first row in result
-	 * @return object mssql_fetch_object
+	 * Get the first row in result as object
+	 * @return object
 	 */
 	public function first();
 
 	/**
 	 * Get the first row in result as array
-	 * @return object mssql_fetch_assoc
+	 * @return array
 	 */
 	public function firstArray();
 
 	/**
 	 * Alias to firstArray
-	 * @return object mssql_fetch_assoc
+	 * @return array
 	 */
 	public function firstAssoc();
 
@@ -142,5 +133,23 @@ interface DbalInterface
 	 * @return mixed escaped
 	 */
 	public function escape($data);
+
+	/**
+	 * Get this instance
+	 * @return $this
+	 */
+	public function getInstance();
+
+	/**
+	 * Get the current connection name
+	 * @return string
+	 */
+	public function connectionName();
+
+	/**
+	 * Get the current connection string array
+	 * @return array
+	 */
+	public function connectionString();
 
 }
