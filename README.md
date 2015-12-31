@@ -308,7 +308,7 @@ function queryBuilder()
 		// Mixed RAW complex
 		$customers = $this->db
 			->table('customer')
-			->select(name, count(*) as cnt)
+			->select('name', 'count(*) as cnt')
 			->where('(x = y AND a = b) OR (c = d)')
 			->groupBy('name')
 			->orderBy('cnt desc')
