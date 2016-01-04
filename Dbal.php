@@ -72,6 +72,7 @@ class Dbal extends Builder
 				#PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 				#PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
 			];
+			//FIXME, merge with config/databse.php options
 		} else {
 			throw new Exception("Connecton type not supported");
 		}
@@ -121,9 +122,7 @@ class Dbal extends Builder
 	 */
 	public function execute($query = null)
 	{
-		if (!isset($query)) {
-			$query = $this->queryBuilder();
-		}
+		if (!isset($query)) $query = $this->queryBuilder();
 
 		// Reset builder
 		$this->configureBuilder();
@@ -215,16 +214,17 @@ class Dbal extends Builder
 
 	/**
 	 * Get entire data set as object
-	 * @return \Illuminate\Support\Collection
+	 * @return \Illuminate\Support\Collection|null
 	 */
 	public function get()
 	{
-		return collect($this->fetch('object'));
+		$results = $this->fetch('object');
+		return empty($results) ? null : collect($results);
 	}
 
 	/**
 	 * Alias to get
-	 * @return \Illuminate\Support\Collection
+	 * @return \Illuminate\Support\Collection|array
 	 */
 	public function all()
 	{
@@ -237,11 +237,12 @@ class Dbal extends Builder
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
 	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
-	 * @return \Illuminate\Support\Collection|array
+	 * @return \Illuminate\Support\Collection|array|null
 	 */
 	public function getArray($value = null, $key = null, $addEmptyRow = false)
 	{
 		$results = $this->fetch('array');
+		if (empty($results)) return null;
 
 		$results = collect($results);
 
@@ -283,11 +284,12 @@ class Dbal extends Builder
 
 	/**
 	 * Get the first row in result as object
-	 * @return object
+	 * @return object|null
 	 */
 	public function first()
 	{
-		return $this->fetch('object', true);
+		$results = $this->fetch('object', true);
+		return empty($results) ? null : $results;
 	}
 
 	/**
@@ -296,7 +298,8 @@ class Dbal extends Builder
 	 */
 	public function firstArray()
 	{
-		return $this->fetch('array', true);
+		$results = $this->fetch('array', true);
+		return empty($results) ? null : $results;
 	}
 
 	/**
@@ -311,11 +314,13 @@ class Dbal extends Builder
 	/**
 	 * Pluck first row/colum or first row/specified column
 	 * @param  string $column optional column to pluck
-	 * @return mixed scalar
+	 * @return mixed scalar|null
 	 */
 	public function pluck($column = null)
 	{
 		$result = $this->firstAssoc('object', true);
+		if (!isset($result)) return null;
+
 		if (isset($column)) {
 			if (isset($result[$column])) return $result[$column];
 			return null;

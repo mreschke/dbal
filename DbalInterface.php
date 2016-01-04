@@ -52,13 +52,13 @@ interface DbalInterface
 
 	/**
 	 * Get entire data set as object
-	 * @return \Illuminate\Support\Collection
+	 * @return \Illuminate\Support\Collection|null
 	 */
 	public function get();
 
 	/**
 	 * Alias to get
-	 * @return \Illuminate\Support\Collection
+	 * @return \Illuminate\Support\Collection|null
 	 */
 	public function all();
 
@@ -68,7 +68,7 @@ interface DbalInterface
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
 	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
-	 * @return \Illuminate\Support\Collection|array
+	 * @return \Illuminate\Support\Collection|array|null
 	 */
 	public function getArray($value = null, $key = null, $addEmptyRow = false);
 
@@ -77,7 +77,7 @@ interface DbalInterface
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
 	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
-	 * @return object mssql_fetch_assoc|array
+	 * @return object mssql_fetch_assoc|array|null
 	 */
 	public function getAssoc($value = null, $key = null, $addEmptyRow = false);
 
@@ -86,32 +86,32 @@ interface DbalInterface
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
 	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
-	 * @return array
+	 * @return array|null
 	 */
 	public function lists($value, $key = null, $addEmptyRow = false);
 
 	/**
 	 * Get the first row in result as object
-	 * @return object
+	 * @return object|null
 	 */
 	public function first();
 
 	/**
 	 * Get the first row in result as array
-	 * @return array
+	 * @return array|null
 	 */
 	public function firstArray();
 
 	/**
 	 * Alias to firstArray
-	 * @return array
+	 * @return array|null
 	 */
 	public function firstAssoc();
 
 	/**
 	 * Pluck first row/colum or first row/specified column
 	 * @param  string $column optional column to pluck
-	 * @return mixed scalar
+	 * @return mixed scalar|null
 	 */
 	public function pluck($column = null);
 
