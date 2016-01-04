@@ -78,7 +78,14 @@ class Dbal extends Builder
 			$handle = new PDO (
 				"$lib:host=$host:$port;dbname=$database",
 				$username,
-				$password
+				$password,
+				[
+					PDO::ATTR_EMULATE_PREPARES => false,
+					PDO::ATTR_STRINGIFY_FETCHES => false,
+					#PDO::ATTR_CASE => PDO::CASE_NATURAL,
+					#PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+					#PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+				]
 			);
 		} catch (PDOException $e) {
 			throw new PDOException($e);

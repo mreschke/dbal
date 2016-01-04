@@ -18,6 +18,8 @@ I built the far more robust and feature rich https://github.com/mreschke/reposit
 This still has a some advantages like:
 
 * Mssql binary GUID conversions
+* Mssql int or decimal to int in PHP return.
+ * In MySQL PDO setting	PDO::ATTR_EMULATE_PREPARES => false and	PDO::ATTR_STRINGIFY_FETCHES => false will return true integers, but does not work for MSSQL dblib connections.
 * Cross/linked server support
 * Easy and clean entity class integration (but NOT entity mapping)
 

@@ -36,16 +36,23 @@ class Mssql extends Dbal implements DbalInterface
 				$firstRow = false;
 				$columns = array_keys((array) $row);
 				foreach ($columns as $colOffset => $name) {
+					// Generalize column types for conversion later
 					$meta = $this->result->getColumnMeta($colOffset);
-					if ($meta['native_type'] == 'binary' && $meta['len'] + $meta['max_length'] == 32) {
-						// This is a GUID column
+					$type = $meta['native_type'];
+					if ($type == 'binary' && $meta['len'] + $meta['max_length'] == 32) {
 						$columnTypes[$name] = 'guid';
-					} elseif ($meta['native_type'] == 'datetime') {
+					} elseif ($type == 'datetime') {
 						$columnTypes[$name] = 'datetime';
+					} elseif ($type == 'bit' || $type == 'int') {
+						$columnTypes[$name] = 'int';
+					} elseif ($type == 'float' || $type == 'money') {
+						$columnTypes[$name] = 'float';
 					}
 				}
 			}
 
+			// Loop each column that requires conversion
+			// $columnTypes is ONLY columns of interest (those that need conversion)
 			foreach ($columnTypes as $name => $type) {
 				$value = $isObject ? $row->$name : $row[$name];
 				if (isset($value)) {
@@ -53,6 +60,10 @@ class Mssql extends Dbal implements DbalInterface
 						$value = $this->binaryToGuid($value);
 					} elseif ($type == 'datetime') {
 						$value = date("Y-m-d H:i:s", strtotime($value));
+					} elseif ($type == 'int') {
+						$value = (int) $value;
+					} elseif ($type == 'float') {
+						$value = (float) $value;
 					}
 					if ($isObject) {
 						$row->$name = $value;
@@ -61,8 +72,9 @@ class Mssql extends Dbal implements DbalInterface
 					}
 				}
 			}
-			$rows[] = $row;
 
+			// Add row to $rows array
+			$rows[] = $row;
 			if ($first) return $row;
 		}
 		return $rows;
