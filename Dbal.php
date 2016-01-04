@@ -60,10 +60,18 @@ class Dbal extends Builder
 			$lib = "dblib";
 			$defaultPort = 1433;
 			$this->connectionString['type'] = 'mssql';
+			$options = []; //dblib does NOT support any options
 		} elseif (preg_match('/mysql/i', $class)) {
 			$lib = 'mysql';
 			$defaultPort = 3306;
 			$this->connectionString['type'] = 'mysql';
+			$options = [
+				PDO::ATTR_EMULATE_PREPARES => false,
+				PDO::ATTR_STRINGIFY_FETCHES => false,
+				#PDO::ATTR_CASE => PDO::CASE_NATURAL,
+				#PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+				#PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+			];
 		} else {
 			throw new Exception("Connecton type not supported");
 		}
@@ -79,13 +87,7 @@ class Dbal extends Builder
 				"$lib:host=$host:$port;dbname=$database",
 				$username,
 				$password,
-				[
-					PDO::ATTR_EMULATE_PREPARES => false,
-					PDO::ATTR_STRINGIFY_FETCHES => false,
-					#PDO::ATTR_CASE => PDO::CASE_NATURAL,
-					#PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-					#PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-				]
+				$options
 			);
 		} catch (PDOException $e) {
 			throw new PDOException($e);
