@@ -41,7 +41,7 @@ class Mssql extends Dbal implements DbalInterface
 					$type = $meta['native_type'];
 					if ($type == 'binary' && $meta['len'] + $meta['max_length'] == 32) {
 						$columnTypes[$name] = 'guid';
-					} elseif ($type == 'datetime') {
+					} elseif ($type == 'datetime' || $type == 'smalldatetime') {
 						$columnTypes[$name] = 'datetime';
 					} elseif ($type == 'bit' || $type == 'int') {
 						$columnTypes[$name] = 'int';
