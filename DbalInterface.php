@@ -86,10 +86,10 @@ interface DbalInterface
 	 * @param  string $value optional value field
 	 * @param  string $key optional key vield
 	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
-	 * @return array|null
+	 * @return array
 	 */
-	public function lists($value, $key = null, $addEmptyRow = false);
-
+	public function pluck($value, $key = null, $addEmptyRow = false);
+	
 	/**
 	 * Get the first row in result as object
 	 * @return object|null
@@ -113,7 +113,7 @@ interface DbalInterface
 	 * @param  string $column optional column to pluck
 	 * @return mixed scalar|null
 	 */
-	public function pluck($column = null);
+	public function value($column = null);
 
 	/**
 	 * Get count of rows in result set

@@ -227,7 +227,7 @@ function rawQueries()
 	$customers = $this->db->query("SELECT * FROM customers")->getArray(); // or getAssoc()
 
 	// Get all as key/value array
-	$customers = $this->db->query("SELECT * FROM customers")->lists('name', 'id');
+	$customers = $this->db->query("SELECT * FROM customers")->pluck('name', 'id');
 
 	// Get first record as object
 	$customers = $this->db->query("SELECT * FROM customers")->first();
@@ -239,14 +239,14 @@ function rawQueries()
 	$customers = $this->db->query("SELECT TOP 1 name FROM customers")->pluck();
 
 	// Get defined column from first record
-	$customers = $this->db->query("SELECT TOP 1 * FROM customers")->pluck('adddress');
+	$customers = $this->db->query("SELECT TOP 1 * FROM customers")->value('adddress');
 
 	// Count number of results
 	// NOTICE: This will actually RUN the full query, so inefficient...
 	// A SELECT count(*) is far more efficient.
 	// So if you want the results too, get results, then count them yourself
 	$count = $this->db->query("SELECT * FROM customers")->count(); // runs full query
-	$count = $this->db->query("SELECT count(*) FROM customers")->pluck(); // db level, very efficient
+	$count = $this->db->query("SELECT count(*) FROM customers")->value(); // db level, very efficient
 	$customers = $this->db->query("SELECT * FROM customers")->get();
 	count($customers) //or because collection, $customers->count();
 

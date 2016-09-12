@@ -247,7 +247,7 @@ class Dbal extends Builder
 		$results = collect($results);
 
 		if (isset($value) && (isset($key))) {
-			$results = $results->lists($value, $key);
+			$results = $results->pluck($value, $key);
 			if ($addEmptyRow) {
 				$results->prepend('', !is_bool($addEmptyRow) ? $addEmptyRow : -1);
 			}
@@ -277,9 +277,18 @@ class Dbal extends Builder
 	 * @param  boolean|string $addEmptyRow optional add empty item to array if $value or $key used, if string, use as empty key (default 0)
 	 * @return array
 	 */
-	public function lists($value, $key = null, $addEmptyRow = false)
+	public function pluck($value, $key = null, $addEmptyRow = false)
 	{
 		return $this->getArray($value, $key, $addEmptyRow);
+	}
+
+	/**
+	 * Alias to pluck
+	 */
+	public function lists_DEPRECATED($value, $key = null, $addEmptyRow = false)
+	{
+		// Laravel deprecated theirs, they use pluck now.
+		return $this->pluck($value, $key, $addEmptyRow);
 	}
 
 	/**
@@ -316,7 +325,7 @@ class Dbal extends Builder
 	 * @param  string $column optional column to pluck
 	 * @return mixed scalar|null
 	 */
-	public function pluck($column = null)
+	public function value($column = null)
 	{
 		$result = $this->firstAssoc('object', true);
 		if (!isset($result)) return null;
