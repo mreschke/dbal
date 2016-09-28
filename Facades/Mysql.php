@@ -6,13 +6,16 @@
  * @license http://mreschke.com/license/mit
  * @author Matthew Reschke <mail@mreschke.com>
  */
-class Mysql extends \Illuminate\Support\Facades\Facade {
+class Mysql extends \Illuminate\Support\Facades\Facade
+{
 
-	/**
-	 * Get the registered name of the component.
-	 *
-	 * @return string
-	 */
-	protected static function getFacadeAccessor() { return 'Mreschke\Dbal\Mysql'; }
-
+    /**
+     * Get the registered name of the component.
+     *
+     * @return string
+     */
+    protected static function getFacadeAccessor()
+    {
+        return 'Mreschke\Dbal\Mysql';
+    }
 }

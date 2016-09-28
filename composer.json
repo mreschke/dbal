@@ -1,23 +1,23 @@
 {
-	"name": "mreschke/dbal",
-	"type": "library",
-	"description": "Mreschke Helpers",
-	"keywords": ["mreschke", "dbal"],
-	"homepage": "http://github.com/mreschke/mreschke-dbal",
-	"license": "MIT",
-	"support": {
-		"issues": "https://github.com/mreschke/mreschke-dbal/issues"
-	},
-	"authors": [
-		{
-			"name": "Matthew Reschke",
-			"email": "mail@mreschke.com",
-			"homepage": "http://mreschke.com"
-		}
-	],
-	"autoload": {
-		"psr-4": {
-			"Mreschke\\Dbal\\": ""
-		}
-	}
+    "name": "mreschke/dbal",
+    "type": "library",
+    "description": "Mreschke Helpers",
+    "keywords": ["mreschke", "dbal"],
+    "homepage": "http://github.com/mreschke/mreschke-dbal",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/mreschke/mreschke-dbal/issues"
+    },
+    "authors": [
+        {
+            "name": "Matthew Reschke",
+            "email": "mail@mreschke.com",
+            "homepage": "http://mreschke.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Mreschke\\Dbal\\": ""
+        }
+    }
 }

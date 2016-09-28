@@ -11,14 +11,13 @@ use PDO;
  */
 class Mysql extends Dbal implements DbalInterface
 {
-	/**
-	 * Mssql escape function to prevent SQL injection attacks on input
-	 * @param  mixed $data
-	 * @return mixed escaped
-	 */
-	public function escape($data)
-	{
-		return mysqli_real_escape_string($this->handle, $data);
-	}
-
+    /**
+     * Mssql escape function to prevent SQL injection attacks on input
+     * @param  mixed $data
+     * @return mixed escaped
+     */
+    public function escape($data)
+    {
+        return mysqli_real_escape_string($this->handle, $data);
+    }
 }
