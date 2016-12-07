@@ -108,11 +108,11 @@ class Mssql extends Dbal implements DbalInterface
     {
         #http://stackoverflow.com/questions/574805/how-to-escape-strings-in-sql-server-using-php
         #This one removes or escapes all harmful characters
-        if (!isset($data) or empty($data)) {
-            return '';
-        }
         if (is_numeric($data)) {
             return $data;
+        }
+        if (!isset($data) or empty($data)) {
+            return '';
         }
         $non_displayables = array(
             '/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
