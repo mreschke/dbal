@@ -32,7 +32,7 @@ interface BuilderInterface
      * @return string
      */
     public function toSql();
-    
+
     /**
      * Set a new select statement
      * @param  string $sql select statement
@@ -42,7 +42,7 @@ interface BuilderInterface
 
     /**
      * Add a new column to the select query
-     * @param [type] $column [description]
+     * @param string $column
      */
     public function addSelect($column);
 

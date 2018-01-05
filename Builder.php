@@ -145,7 +145,7 @@ abstract class Builder implements BuilderInterface
 
     /**
      * Add a new column to the select query
-     * @param [type] $column [description]
+     * @param string $column
      */
     public function addSelect($column)
     {
@@ -174,7 +174,7 @@ abstract class Builder implements BuilderInterface
     {
         // Reset connection for next query
         $this->dbInstance()->reset();
-        
+
         $this->from = $sql;
         return $this;
     }
@@ -221,7 +221,7 @@ abstract class Builder implements BuilderInterface
             if (!in_array(strtolower($operator), $this->operators)) {
                 $operator = "=";
             }
-            
+
             if (is_bool($value)) {
                 $value = $value ? 1 : 0;
             } else {
