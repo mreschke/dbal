@@ -20,4 +20,22 @@ class Mysql extends Dbal implements DbalInterface
     {
         return mysqli_real_escape_string($this->handle, $data);
     }
+
+    /**
+     * Build MSSQL specific Limit and Offset query
+     * @param int $limit
+     * @param int $offset
+     * @param int $page
+     * @return string
+     */
+    public function buildLimitOffset($limit, $offset, $page)
+    {
+        if (isset($limit) || isset($offset) || isset($page)) {
+            $limit = $limit ?: 25;
+            $offset = $offset ?: 0;
+            if (isset($page)) $offset = ($this->page -1) * $limit;
+            return " LIMIT $limit, $offset ";
+        }
+    }
+
 }

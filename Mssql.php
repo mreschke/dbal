@@ -11,6 +11,29 @@ use PDO;
  */
 class Mssql extends Dbal implements DbalInterface
 {
+
+    /**
+     * Build MSSQL specific Limit and Offset query
+     * @param int $limit
+     * @param int $offset
+     * @param int $page
+     * @return string
+     */
+    public function buildLimitOffset($limit, $offset, $page)
+    {
+        if (isset($limit) || isset($offset) || isset($page)) {
+            $limit = $limit ?: 25;
+            $offset = $offset ?: 0;
+            if (isset($page)) $offset = ($page -1) * $limit;
+
+            return " OFFSET $offset ROWS FETCH NEXT $limit ROWS ONLY ";
+            // 1-10
+            // SELECT * FROM SSO.dbo.tbl_user ORDER BY user_id OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;
+            // 11-20
+            // SELECT * FROM SSO.dbo.tbl_user ORDER BY user_id OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;
+        }
+    }
+
     /**
      * Fetch records as array of objects or array of arrays
      * @return array

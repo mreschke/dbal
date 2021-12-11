@@ -21,6 +21,12 @@ abstract class Builder implements BuilderInterface
     protected $select;
 
     /**
+     * The count query
+     * @var array
+     */
+    protected $selectCount;
+
+    /**
      * Set distinct
      * @var array
      */
@@ -57,6 +63,24 @@ abstract class Builder implements BuilderInterface
     protected $orderBy;
 
     /**
+     * The limit by statement
+     * @var string
+     */
+    protected $limit;
+
+    /**
+     * The offset by statement
+     * @var string
+     */
+    protected $offset;
+
+    /**
+     * The page by statement for limit and offset
+     * @var string
+     */
+    protected $page;
+
+    /**
      * All of the available clause operators
      * @var array
      */
@@ -74,12 +98,16 @@ abstract class Builder implements BuilderInterface
     {
         $this->key = null;
         $this->select = ['*'];
+        $this->selectCount = null;
         $this->distinct = false;
         $this->from = null;
         $this->where = null;
         $this->groupBy = null;
         $this->having = null;
         $this->orderBy = null;
+        $this->limit = null;
+        $this->offset = null;
+        $this->page = null;
     }
 
     /**
@@ -101,25 +129,39 @@ abstract class Builder implements BuilderInterface
         if ($this->distinct) {
             $query .= "DISTINCT ";
         }
-        foreach ($this->select as $column) {
-            $query .= "$column, ";
+
+        if (isset($this->select) && !isset($this->selectCount)) {
+            foreach ($this->select as $column) {
+                $query .= "$column, ";
+            }
+            $query = substr($query, 0, -2);
         }
-        $query = substr($query, 0, -2);
+
+        if (isset($this->selectCount)) {
+            $query .= "count($this->selectCount) ";
+        }
 
         $query .= " FROM $this->from ";
 
         if (isset($this->where)) {
             $query .= "WHERE $this->where ";
         }
+
         if (isset($this->groupBy)) {
             $query .= "GROUP BY $this->groupBy ";
         }
         if (isset($this->having)) {
             $query .= "HAVING $this->having ";
         }
-        if (isset($this->orderBy)) {
-            $query .= "ORDER BY $this->orderBy";
+        if (isset($this->orderBy) && !isset($this->selectCount)) {
+            $query .= "ORDER BY $this->orderBy ";
         }
+
+        // Add in limit, offset and paging per database type
+        if (!isset($this->selectCount)) {
+            $query .= $this->dbInstance()->buildLimitOffset($this->limit, $this->offset, $this->page);
+        }
+
         return $query;
     }
 
@@ -143,6 +185,11 @@ abstract class Builder implements BuilderInterface
         return $this;
     }
 
+    public function selectColumn($sql) {
+        $this->selectCount = $sql;
+        return $this;
+    }
+
     /**
      * Add a new column to the select query
      * @param string $column
@@ -162,6 +209,39 @@ abstract class Builder implements BuilderInterface
     public function distinct($distinct = true)
     {
         $this->distinct = $distinct;
+        return $this;
+    }
+
+    /**
+     * Set a new limit statement for limit and offset
+     * @param int $page
+     * @return self chainable
+     */
+    public function limit($limit)
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * Set a new offset statement for limit and offset
+     * @param int $page
+     * @return self chainable
+     */
+    public function offset($offset)
+    {
+        $this->offset = $offset;
+        return $this;
+    }
+
+    /**
+     * Set a new page statement for limit and offset
+     * @param int $page
+     * @return self chainable
+     */
+    public function page($page)
+    {
+        $this->page = $page;
         return $this;
     }
 

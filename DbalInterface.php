@@ -89,7 +89,7 @@ interface DbalInterface
      * @return array
      */
     public function pluck($value, $key = null, $addEmptyRow = false);
-    
+
     /**
      * Get the first row in result as object
      * @return object|null
@@ -151,4 +151,13 @@ interface DbalInterface
      * @return array
      */
     public function connectionString();
+
+    /**
+     * Build MSSQL specific Limit and Offset query
+     * @param int $limit
+     * @param int $offset
+     * @param int $page
+     * @return string
+     */
+    public function buildLimitOffset($limit, $offset, $page);
 }

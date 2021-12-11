@@ -38,7 +38,7 @@ interface BuilderInterface
      * @param  string $sql select statement
      * @return self chainable
      */
-    public function select($sql);
+    public function select($columns = array('*'));
 
     /**
      * Add a new column to the select query
