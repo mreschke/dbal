@@ -126,7 +126,7 @@ abstract class Builder implements BuilderInterface
     public function queryBuilder()
     {
         $query = "SELECT ";
-        if ($this->distinct) {
+        if ($this->distinct and !isset($this->selectCount)) {
             $query .= "DISTINCT ";
         }
 
@@ -138,7 +138,11 @@ abstract class Builder implements BuilderInterface
         }
 
         if (isset($this->selectCount)) {
-            $query .= "count($this->selectCount) ";
+            if ($this->distinct) {
+                $query .= "count(DISTINCT $this->selectCount) ";
+            } else {
+                $query .= "count($this->selectCount) ";
+            }
         }
 
         $query .= " FROM $this->from ";
@@ -185,7 +189,7 @@ abstract class Builder implements BuilderInterface
         return $this;
     }
 
-    public function selectColumn($sql) {
+    public function selectCount($sql) {
         $this->selectCount = $sql;
         return $this;
     }
