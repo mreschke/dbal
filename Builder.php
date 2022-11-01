@@ -427,8 +427,8 @@ abstract class Builder implements BuilderInterface
             $keys = explode(',', $keys);
         }
 
-        if (count($ids) == count($keys)) {
-            for ($i = 0; $i <= count($keys)-1; $i++) {
+        if (cnt($ids) == cnt($keys)) {
+            for ($i = 0; $i <= cnt($keys)-1; $i++) {
                 $this->where(trim($keys[$i]), trim($ids[$i]));
             }
             $this->orderBy(null);
@@ -454,8 +454,8 @@ abstract class Builder implements BuilderInterface
             $keys = explode(',', $keys);
         }
 
-        if (count($ids) == count($keys)) {
-            for ($i = 0; $i <= count($keys)-1; $i++) {
+        if (cnt($ids) == cnt($keys)) {
+            for ($i = 0; $i <= cnt($keys)-1; $i++) {
                 $this->where(trim($keys[$i]), trim($ids[$i]));
             }
             $this->orderBy(null);
@@ -539,7 +539,7 @@ abstract class Builder implements BuilderInterface
         }
         if ($foundValue) {
             $query = substr($query, 0, -2)." WHERE ";
-            for ($i = 0; $i <= count($keys)-1; $i++) {
+            for ($i = 0; $i <= cnt($keys)-1; $i++) {
                 $query .= $keys[$i]." = '".$this->dbInstance()->escape(trim($originalPKValues[$i]))."' AND ";
             }
             $query = substr($query, 0, -5);
@@ -561,7 +561,7 @@ abstract class Builder implements BuilderInterface
         }
 
         $query = "DELETE FROM $this->from WHERE ";
-        for ($i = 0; $i <= count($keys)-1; $i++) {
+        for ($i = 0; $i <= cnt($keys)-1; $i++) {
             $query .= $keys[$i]." = '".$this->dbInstance()->escape(trim($ids[$i]))."' AND ";
         }
         $query = substr($query, 0, -5);

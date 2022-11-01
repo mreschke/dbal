@@ -360,7 +360,7 @@ class Dbal extends Builder
     public function count()
     {
         $this->result->setFetchMode(PDO::FETCH_ASSOC);
-        return count($this->result->fetchAll());
+        return cnt($this->result->fetchAll());
     }
 
     /**
