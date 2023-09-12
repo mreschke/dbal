@@ -66,13 +66,14 @@ class Dbal extends Builder
             $lib = 'mysql';
             $defaultPort = 3306;
             $this->connectionString['type'] = 'mysql';
-            $options = [
-                PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::ATTR_STRINGIFY_FETCHES => false,
-                #PDO::ATTR_CASE => PDO::CASE_NATURAL,
-                #PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                #PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-            ];
+            $options = $this->connectionString['options'];
+            // $options = [
+            //     PDO::ATTR_EMULATE_PREPARES => false,
+            //     PDO::ATTR_STRINGIFY_FETCHES => false,
+            //     #PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            //     #PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            //     #PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+            // ];
             //FIXME, merge with config/databse.php options
         } else {
             throw new Exception("Connecton type not supported");
