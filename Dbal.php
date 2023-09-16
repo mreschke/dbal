@@ -66,7 +66,7 @@ class Dbal extends Builder
             $lib = 'mysql';
             $defaultPort = 3306;
             $this->connectionString['type'] = 'mysql';
-            $options = $this->connectionString['options'];
+            $options = isset($this->connectionString['options']) ? $this->connectionString['options'] : [];
             // $options = [
             //     PDO::ATTR_EMULATE_PREPARES => false,
             //     PDO::ATTR_STRINGIFY_FETCHES => false,
